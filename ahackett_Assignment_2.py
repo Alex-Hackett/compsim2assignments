@@ -13,6 +13,8 @@ from scipy import linalg
 import sympy
 
 
+                    
+
 
 class Assignment2:
     def __init__(self, matrix, B = np.array(([]))):
@@ -280,8 +282,7 @@ class Assignment2:
             print('No Sucessful QRD Found, Resorting to SVD')
             self.QR_work = False
         
-             
-        
+ 
 A1 = np.array(([6,1,5],[5,1,4],[0,5,-5],[2,2,0]))
 A2 = np.array(([6,1,5],[5,1,4],[1,5,-5],[2,2,0]))
 x1 = Assignment2(A1)
