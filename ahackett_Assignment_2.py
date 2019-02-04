@@ -27,8 +27,8 @@ except ImportError:
         os.system('python2 -m pip install sympy --user')
     elif six.PY3:
         os.system('python3 -m pip install sympy --user')
-    
-import sympy
+    import sympy
+
 
                     
 
@@ -465,26 +465,26 @@ class Assignment2:
             self.QR_work = False
         
  
-#def main():
-A1 = np.array(([6,1,5],[5,1,4],[0,5,-5],[2,2,0]))
-A2 = np.array(([6,1,5],[5,1,4],[1,5,-5],[2,2,0]))
-x1 = Assignment2(A1)
-x2 = Assignment2(A2)
-
-x1.probOne()
-x2.probOne()
-
-A3 = np.array(([3,6,-3,2],[2,5,0,4],[3,9,3,-1],[1,2,-1,1]))
-B3 = np.array(([3,1,-3,2]))
-x3 = Assignment2(A3, B3)
-
-x3.probTwo()
-
-A4 = np.array(([1,6,-3,0],[0,4,2,-3],[3,18,1,-5],[2,0,0,3],[2,8,2,0]))
-x4 = Assignment2(A4)
-
-x4.probThree()
+def main():
+    A1 = np.array(([6,1,5],[5,1,4],[0,5,-5],[2,2,0]))
+    A2 = np.array(([6,1,5],[5,1,4],[1,5,-5],[2,2,0]))
+    x1 = Assignment2(A1)
+    x2 = Assignment2(A2)
     
-#if __name__ == '__main__':
-#   main()
+    x1.probOne()
+    x2.probOne()
+    
+    A3 = np.array(([3,6,-3,2],[2,5,0,4],[3,9,3,-1],[1,2,-1,1]))
+    B3 = np.array(([3,1,-3,2]))
+    x3 = Assignment2(A3, B3)
+    
+    x3.probTwo()
+    
+    A4 = np.array(([1,6,-3,0],[0,4,2,-3],[3,18,1,-5],[2,0,0,3],[2,8,2,0]))
+    x4 = Assignment2(A4)
+    
+    x4.probThree()
+    
+if __name__ == '__main__':
+    main()
 
