@@ -1,4 +1,5 @@
-#!/bin/usr/python2.7
+#!/usr/bin/python3
+
 
 """
 PYU44C01 Linear Algebra Assignment 2
@@ -14,7 +15,15 @@ from __future__ import division
 import numpy as np
 from scipy import linalg
 #To place matricies in reduced row echelon form
-import sympy
+#Sympy is not a default install, so check if it exists,
+#if not, use pip to install it locally
+try:
+    import sympy
+except ImportError:
+    print('sympy is not installed locally, installing via pip')
+    import os
+    os.system('pip install sympy --user')
+    import sympy
 
 
                     
