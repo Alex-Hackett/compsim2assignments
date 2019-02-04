@@ -10,21 +10,25 @@ ahackett@tcd.ie
 """
 #Ensure backward/forward compatibility
 from __future__ import division
-
+#Check for version
+import six 
 
 import numpy as np
 from scipy import linalg
 #To place matricies in reduced row echelon form
 #Sympy is not a default install, so check if it exists,
 #if not, use pip to install it locally
+import os
 try:
     import sympy
 except ImportError:
     print('sympy is not installed locally, installing via pip')
-    import os
-    os.system('pip install sympy --user')
-    import sympy
-
+    if six.PY2:
+        os.system('python2 -m pip install sympy --user')
+    elif six.PY3:
+        os.system('python3 -m pip install sympy --user')
+    
+import sympy
 
                     
 
