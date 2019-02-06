@@ -51,7 +51,6 @@ class Assignment2:
         #find the rank of the matrix
         self.findRank()
         
-        
     def probOne(self):
         self.outputIni()
         self.pseudoInv()
@@ -81,22 +80,20 @@ class Assignment2:
     def columnSpaceBasis(self):
         '''
         Finds A basis for the column space of the matrix
-        The column space of the matrix is the row space of the transpose
-        Since elementary column operations fail to preserve the column
-        space, but elementary row operations do preserve the row space,
-        we reduce the transpose of A to reduced row echelon form, form 
-        a row space basis from the non-zero rows of the matrix, then 
-        transpose to get a set of column space basis vectors
+        Reduce the matrix to reduced row echelon form and identify the pivot elements
+        construct a column space basis from the columns in the ORIGINAL
+        matrix that correspond to the columns containing the pivot elements
+        in the reduced row echelon form
         '''
-        self.rRowEch(matrix_to_t_rref=self.matrix.copy())
+        #self.rRowEch(matrix_to_t_rref=self.matrix.copy())
+        self.columnbasis = self.matrix_rRow_Ech[~np.all(self.matrix_rRow_Ech==0, axis=1)].copy()
         piv_rows = []
         for i in range(len(self.matrix_rRow_Ech)):
             for j in range(len(self.matrix_rRow_Ech[0])):
                 if self.matrix_rRow_Ech[i,j] >= 1:
                     piv_rows.append(j)
-                    i += 1
-        free_rows = sorted(set(range(piv_rows[0], piv_rows[-1] + 1)).difference(piv_rows))
-        self.columnbasis = self.matrix[free_rows].copy()
+                    j += 1
+        self.columnbasis = self.matrix[:,piv_rows]
         print('The Column Space Basis of the Matrix is')
         print(self.columnbasis)
         
@@ -104,20 +101,30 @@ class Assignment2:
         '''
         Finds A basis for the left null space of the matrix
         The left null space of the matrix is the kernal (null space) of the
-        transpose of the matrix, so take the transpose of the matrix, reduce to
-        reduced row echelon form, take the free variable columns (those columns)
-        which do not contain a pivot element and then form a basis for the kernal
-        of A^T from those column vectors, then transpose to obtain a set of
-        left null space basis vectors for A
+        transpose of the matrix, so append the identity matrix to the right
+        of the original matrix and bring to reduced row echelon form, this will
+        destroy the left null space, but the identity matrix will record the 
+        elementary row operations, so the row(s) of this matrix that give the
+        zero matrix when used to permute the original matrix form a basis for
+        the left null space, since left multiplication operates on the rows
+        of a matrix in the same way that right multiplication operates on the
+        columns
         '''
-        piv_cols = []
-        for i in range(len(self.rrefTranspose)):
-            for j in range(len(self.rrefTranspose[0])):
-                if self.rrefTranspose[i,j] >= 1:
-                    piv_cols.append(j)
-                    i += 1
-        free_cols = sorted(set(range(piv_cols[0], piv_cols[-1] + 1)).difference(piv_cols))
-        self.lnullbasis = np.transpose(self.rrefTranspose.copy())[free_cols]
+        A_matrix = self.matrix.copy()
+        E_matrix = np.eye(max([self.matrix_row_dim, self.matrix_column_dim]))
+        aug_matrix = np.hstack((A_matrix, E_matrix))
+        aug_matrix = sympy.Matrix(aug_matrix)
+        aug_matrix_rref = np.array(aug_matrix.rref()[0]).copy()
+        E_matrix = aug_matrix_rref[:, self.matrix_column_dim:].copy()
+        #print(aug_matrix)
+        #print(aug_matrix_rref)
+        #print(A_matrix)
+        #print(E_matrix)
+        R_matrix = np.dot(E_matrix, A_matrix)
+        #print(R_matrix)
+        zero_rows_R = [np.all(R_matrix == 0, axis =1)]
+        #print(zero_rows_R)
+        self.lnullbasis = E_matrix[tuple(zero_rows_R)].copy()
         print('The Left Null Space Basis of the Matrix is')
         print(self.lnullbasis)
         
@@ -144,8 +151,10 @@ class Assignment2:
             for j in range(len(self.matrix_rRow_Ech[0])):
                 if self.matrix_rRow_Ech[i,j] >= 1:
                     piv_rows.append(j)
-                    i += 1
+                    j += 1
         free_rows = sorted(set(range(piv_rows[0], piv_rows[-1] + 1)).difference(piv_rows))
+        #print(free_rows)
+        #print(piv_rows)
         self.nullbasis = (self.matrix_rRow_Ech.copy())[free_rows]
         '''
         #If there are no free variables, then the null space is spanned 
@@ -291,20 +300,15 @@ class Assignment2:
             self.pseudo_inv = np.dot(np.dot(v,s_dagger),ut)
             self.pseudo_inv[np.isclose(np.abs(self.pseudo_inv),0)] = 0
             
-    def rRowEch(self, matrix_to_t_rref=np.array(([]))):
+    def rRowEch(self):
         '''
         Produce the reduced row echelon form of a matrix, or of the transpose
         of a matrix (if matrix_to_t_rref is passed a matrix) and store in the
         appropriate var
         '''
-        if not matrix_to_t_rref.any():
-            self.matrix_rRow_Ech = self.matrix.copy()
-            mat = sympy.Matrix(self.matrix_rRow_Ech.copy())
-            self.matrix_rRow_Ech = np.array(mat.rref()[0]).copy()
-        else:
-            T_mat = sympy.Matrix(np.transpose(matrix_to_t_rref))
-            self.rrefTranspose = np.array(T_mat.rref()[0]).copy()
-            
+        self.matrix_rRow_Ech = self.matrix.copy()
+        mat = sympy.Matrix(self.matrix_rRow_Ech.copy())
+        self.matrix_rRow_Ech = np.array(mat.rref()[0]).copy()
         
 
         
@@ -472,45 +476,27 @@ class Assignment2:
             self.QR_work = False
         
  
-#def main():
-A1 = np.array(([6,1,5],[5,1,4],[0,5,-5],[2,2,0]))
-A2 = np.array(([6,1,5],[5,1,4],[1,5,-5],[2,2,0]))
-x1 = Assignment2(A1)
-x2 = Assignment2(A2)
-
-x1.probOne()
-x2.probOne()
-
-A3 = np.array(([3,6,-3,2],[2,5,0,4],[3,9,3,-1],[1,2,-1,1]))
-B3 = np.array(([3,1,-3,2]))
-x3 = Assignment2(A3, B3)
-
-x3.probTwo()
-
-A4 = np.array(([1,6,-3,0],[0,4,2,-3],[3,18,1,-5],[2,0,0,3],[2,8,2,0]))
-x4 = Assignment2(A4)
-
-x4.probThree()
+def main():
+    A1 = np.array(([6,1,5],[5,1,4],[0,5,-5],[2,2,0]))
+    A2 = np.array(([6,1,5],[5,1,4],[1,5,-5],[2,2,0]))
+    x1 = Assignment2(A1)
+    x2 = Assignment2(A2)
     
-#if __name__ == '__main__':
-#    main()
-
-
-
-def test_svd(matrix):
-    At = np.transpose(matrix)
-    AtA = np.dot(At, matrix)
-    AtA_eig, AtA_eign_vec = np.linalg.eig(AtA)
-    singular_vals = AtA_eig*AtA_eig
-    #singular_vals = singular_vals[np.argsort(singular_vals)]
-    #AtA_eign_vec = AtA_eign_vec[np.argsort(singular_vals)]
+    x1.probOne()
+    x2.probOne()
     
-    S = np.diag(singular_vals)
-    S_inv = linalg.inv(S)
-    V = np.eye(len(AtA_eign_vec))
-    for i in range(len(AtA_eign_vec[0])):
-        V[:,i] = AtA_eign_vec[:,i]
-    Vt = np.transpose(V)
-    U = np.dot(np.dot(matrix, V),S_inv)
-    return U, S, Vt
+    A3 = np.array(([3,6,-3,2],[2,5,0,4],[3,9,3,-1],[1,2,-1,1]))
+    B3 = np.array(([3,1,-3,2]))
+    x3 = Assignment2(A3, B3)
     
+    x3.probTwo()
+    
+    A4 = np.array(([1,6,-3,0],[0,4,2,-3],[3,18,1,-5],[2,0,0,3],[2,8,2,0]))
+    x4 = Assignment2(A4)
+    
+    x4.probThree()
+    
+if __name__ == '__main__':
+    main()
+
+
