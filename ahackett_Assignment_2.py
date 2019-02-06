@@ -89,7 +89,14 @@ class Assignment2:
         transpose to get a set of column space basis vectors
         '''
         self.rRowEch(matrix_to_t_rref=self.matrix.copy())
-        self.columnbasis = np.transpose(self.rrefTranspose[~np.all(self.rrefTranspose==0, axis=1)].copy())
+        piv_rows = []
+        for i in range(len(self.matrix_rRow_Ech)):
+            for j in range(len(self.matrix_rRow_Ech[0])):
+                if self.matrix_rRow_Ech[i,j] >= 1:
+                    piv_rows.append(j)
+                    i += 1
+        free_rows = sorted(set(range(piv_rows[0], piv_rows[-1] + 1)).difference(piv_rows))
+        self.columnbasis = self.matrix[free_rows].copy()
         print('The Column Space Basis of the Matrix is')
         print(self.columnbasis)
         
@@ -465,26 +472,45 @@ class Assignment2:
             self.QR_work = False
         
  
-def main():
-    A1 = np.array(([6,1,5],[5,1,4],[0,5,-5],[2,2,0]))
-    A2 = np.array(([6,1,5],[5,1,4],[1,5,-5],[2,2,0]))
-    x1 = Assignment2(A1)
-    x2 = Assignment2(A2)
-    
-    x1.probOne()
-    x2.probOne()
-    
-    A3 = np.array(([3,6,-3,2],[2,5,0,4],[3,9,3,-1],[1,2,-1,1]))
-    B3 = np.array(([3,1,-3,2]))
-    x3 = Assignment2(A3, B3)
-    
-    x3.probTwo()
-    
-    A4 = np.array(([1,6,-3,0],[0,4,2,-3],[3,18,1,-5],[2,0,0,3],[2,8,2,0]))
-    x4 = Assignment2(A4)
-    
-    x4.probThree()
-    
-if __name__ == '__main__':
-    main()
+#def main():
+A1 = np.array(([6,1,5],[5,1,4],[0,5,-5],[2,2,0]))
+A2 = np.array(([6,1,5],[5,1,4],[1,5,-5],[2,2,0]))
+x1 = Assignment2(A1)
+x2 = Assignment2(A2)
 
+x1.probOne()
+x2.probOne()
+
+A3 = np.array(([3,6,-3,2],[2,5,0,4],[3,9,3,-1],[1,2,-1,1]))
+B3 = np.array(([3,1,-3,2]))
+x3 = Assignment2(A3, B3)
+
+x3.probTwo()
+
+A4 = np.array(([1,6,-3,0],[0,4,2,-3],[3,18,1,-5],[2,0,0,3],[2,8,2,0]))
+x4 = Assignment2(A4)
+
+x4.probThree()
+    
+#if __name__ == '__main__':
+#    main()
+
+
+
+def test_svd(matrix):
+    At = np.transpose(matrix)
+    AtA = np.dot(At, matrix)
+    AtA_eig, AtA_eign_vec = np.linalg.eig(AtA)
+    singular_vals = AtA_eig*AtA_eig
+    #singular_vals = singular_vals[np.argsort(singular_vals)]
+    #AtA_eign_vec = AtA_eign_vec[np.argsort(singular_vals)]
+    
+    S = np.diag(singular_vals)
+    S_inv = linalg.inv(S)
+    V = np.eye(len(AtA_eign_vec))
+    for i in range(len(AtA_eign_vec[0])):
+        V[:,i] = AtA_eign_vec[:,i]
+    Vt = np.transpose(V)
+    U = np.dot(np.dot(matrix, V),S_inv)
+    return U, S, Vt
+    
