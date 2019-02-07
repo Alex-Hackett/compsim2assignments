@@ -12,7 +12,6 @@ ahackett@tcd.ie
 from __future__ import division
 #Check for version
 import six 
-
 import numpy as np
 from scipy import linalg
 #To place matricies in reduced row echelon form
@@ -30,7 +29,7 @@ except ImportError:
     import sympy
 
 
-                    
+       
 
 
 class Assignment2:
@@ -38,6 +37,7 @@ class Assignment2:
     Class that takes an input matrix, and optionally a result vector
     and performs all the maniputations required for each problem
     '''
+    
     def __init__(self, matrix, B = np.array(([]))):
         self.matrix = matrix
         self.B = B
@@ -96,7 +96,7 @@ class Assignment2:
         self.columnbasis = self.matrix[:,piv_rows]
         print('The Column Space Basis of the Matrix is')
         print(self.columnbasis)
-        
+    
     def LNullSpaceBasis(self):
         '''
         Finds A basis for the left null space of the matrix
@@ -138,7 +138,7 @@ class Assignment2:
         self.rowbasis = self.matrix_rRow_Ech[~np.all(self.matrix_rRow_Ech == 0, axis =1)].copy()
         print('The Row Space Basis of the Matrix is')
         print(self.rowbasis)
-                    
+            
     def nullSpaceBasis(self):
         '''
         Finds A null space basis for the matrix. A set of null space vectors
@@ -236,7 +236,7 @@ class Assignment2:
             print(self.R_inv)
         else:
             print('No Right Inverse Exists')
-            
+    
     def findRinv(self):
         '''
         If a right inverse exists, find it according to the formula
@@ -247,7 +247,7 @@ class Assignment2:
             #print(self.R_inv)
         else:
             print('No Right Inverse Exists!!')
-            
+          
     def findLinv(self):
         '''
         If a left inverse exists, find it according to the formula
@@ -257,7 +257,7 @@ class Assignment2:
             self.L_inv = np.dot(linalg.inv(np.dot(np.transpose(self.matrix.copy()),self.matrix.copy())), np.transpose(self.matrix.copy()))
         else:
             print('No Left Inverse Exists!!')
-        
+
     def pseudoInv(self):
         '''
         Find the generalized Moore-Penrose Pseudoinverse, using an appropriate
