@@ -16,7 +16,7 @@ from scipy import linalg
 import os
 import matplotlib.pylab as plt
 
-class MatEqnSol:
+class MatEqnSol:        
     def __init__(self, B, input_mat = False):
         if np.all(input_mat):
             self.matrix = input_mat
@@ -117,7 +117,7 @@ class MatEqnSol:
         
 def main():
     B = np.array(([1,2,3,4,5,6,7,8,9,10,11,12,13]))
-    tolerances = np.linspace(1e-3, 1e-15, 500)
+    tolerances = np.linspace(1e-3, 1e-16, 500)
     steep_steps = []
     conj_steps = []
     for i in tolerances:
@@ -137,6 +137,18 @@ def main():
     plt.grid(which='both')
     plt.legend()
     plt.show()
-
+    
+    print('Provided b Vector')
+    print(s1.B)
+    
+    print('b Vector Recreated Through Exact Inverse')
+    print(np.dot(s1.matrix, s1.exact_x))
+    
+    print('b Vector Recreated Through Steepest Descent Algorithm')
+    print(np.dot(s1.matrix, s1.steep_solution))
+    
+    print('b Vector Recreated Through Conjugate Gradient Algorithm')
+    print(np.dot(s1.matrix, s1.conj_solution))
+    
 if __name__ == '__main__':
     main()
