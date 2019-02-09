@@ -115,26 +115,28 @@ class MatEqnSol:
         self.conj_solution = x
         self.conj_steps_taken = i
         
-        
-B = np.array(([1,2,3,4,5,6,7,8,9,10,11,12,13]))
-tolerances = np.linspace(1e-3, 1e-15, 20000)
-steep_steps = []
-conj_steps = []
-for i in tolerances:
-    s1 = MatEqnSol(B)
-    s1.error_tolerance = i
-    s1.steepestDescent()
-    s1.conjGrad()
-    steep_steps.append(s1.steep_steps_taken)
-    conj_steps.append(s1.conj_steps_taken)
-fig1 = plt.figure()
-plt.plot(tolerances, steep_steps, color = 'b', label = 'Steepest Descent')
-plt.title('Efficiency Comparison Between Steepest Descent and Conjugate Gradient')
-plt.xlabel('Acceptable Magnitude of Residual Vector')
-plt.ylabel('Number of Iterations Required to Reach Desired Residual')
-plt.plot(tolerances, conj_steps, color = 'r', label='Conjugate Gradient')
-plt.grid(which='both')
-plt.legend()
-plt.show()
+def main():
+    B = np.array(([1,2,3,4,5,6,7,8,9,10,11,12,13]))
+    tolerances = np.linspace(1e-3, 1e-15, 500)
+    steep_steps = []
+    conj_steps = []
+    for i in tolerances:
+        s1 = MatEqnSol(B)
+        s1.error_tolerance = i
+        s1.steepestDescent()
+        s1.conjGrad()
+        steep_steps.append(s1.steep_steps_taken)
+        conj_steps.append(s1.conj_steps_taken)
+    s1.printOutput()
+    fig1 = plt.figure()
+    plt.plot(tolerances, steep_steps, color = 'b', label = 'Steepest Descent')
+    plt.title('Efficiency Comparison Between Steepest Descent and Conjugate Gradient')
+    plt.xlabel('Acceptable Magnitude of Residual Vector')
+    plt.ylabel('Number of Iterations Required to Reach Desired Residual')
+    plt.plot(tolerances, conj_steps, color = 'r', label='Conjugate Gradient')
+    plt.grid(which='both')
+    plt.legend()
+    plt.show()
 
-s1.printOutput()
+if __name__ == '__main__':
+    main()
