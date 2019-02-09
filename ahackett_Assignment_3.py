@@ -56,6 +56,13 @@ class MatEqnSol:
         print('\n')
         print('The Exact Solution Vector x, Produced by Inverting A was:')
         print(self.exact_x)
+        if np.allclose(self.exact_x, self.steep_solution):
+            print('The Steepest Descent Solution Matches the Exact Solution')
+        else: print('Steepest Descent Failed to Produce the Exact Solution')
+        if np.allclose(self.exact_x, self.conj_solution):
+            print('The Conjugate Gradient Solution Matches the Exact Solution')
+        else: print('Conjugate Gradient Failed to Produce the Exact Solution')
+            
     
     def solveExact(self):
         self.exact_x = np.dot(linalg.inv(self.matrix), self.B)
@@ -110,7 +117,7 @@ class MatEqnSol:
         
         
 B = np.array(([1,2,3,4,5,6,7,8,9,10,11,12,13]))
-tolerances = np.linspace(1e-3, 1e-15, 5000)
+tolerances = np.linspace(1e-3, 1e-15, 20000)
 steep_steps = []
 conj_steps = []
 for i in tolerances:
@@ -121,12 +128,13 @@ for i in tolerances:
     steep_steps.append(s1.steep_steps_taken)
     conj_steps.append(s1.conj_steps_taken)
 fig1 = plt.figure()
-plt.plot(tolerances, steep_steps, color = 'b')
+plt.plot(tolerances, steep_steps, color = 'b', label = 'Steepest Descent')
 plt.title('Efficiency Comparison Between Steepest Descent and Conjugate Gradient')
 plt.xlabel('Acceptable Magnitude of Residual Vector')
 plt.ylabel('Number of Iterations Required to Reach Desired Residual')
-plt.plot(tolerances, conj_steps, color = 'r')
+plt.plot(tolerances, conj_steps, color = 'r', label='Conjugate Gradient')
 plt.grid(which='both')
+plt.legend()
 plt.show()
 
 s1.printOutput()
