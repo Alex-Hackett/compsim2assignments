@@ -139,8 +139,11 @@ class MatEqnSol:
                 print(' !Warning! Max Iterations Exhausted')
         if not i == imax:
             if self.verbose: print('Residual Magnitude Tolerance Reached')
+        #Store the magnitude of the residual
         self.steep_residual_mag = np.dot(np.transpose(r), r)
+        #Store the solution determined by steepest descent
         self.steep_solution = x
+        #Store the number of steps taken as a measure of efficiency
         self.steep_steps_taken = i
         
     def conjGrad(self):
@@ -153,51 +156,96 @@ class MatEqnSol:
         x = self.initial_guess.copy()
         i = 0
         imax = self.max_iterations
+        #Determine the initial residual vector
         r = self.B - np.dot(self.matrix, x)
+        #Set the initial direction vector to the residual vector
         d = r.copy()
+        #Determine the initial magnitude of the residual vector
         delta = np.dot(np.transpose(r),r)
         delta0 = delta
         while i < imax and delta > self.error_tolerance:
+            '''
+            Main loop for conjugate gradient.
+            While the error is above the tolerance set, determine the
+            conjugate direction of the next step and the length of 
+            that step, and store in the direction vector d, then 
+            take that step and update the residual and direction 
+            vectors for the next step though the loop
+            '''
             if self.verbose: print('Iteration', i)
+            #Determine alpha as Delta / (d^T.A.d)
             alpha = delta / (np.dot(np.transpose(d), np.dot(self.matrix, d)))
+            #Take the step with the correct length in the direction of d
+            #updating the solution vector with the new result
             x = x + np.dot(alpha, d)
+            #Recompute the new residual vector
             r = self.B - np.dot(self.matrix, x)
+            #And its new magnitude
             delta0 = delta
             delta = np.dot(np.transpose(r),r)
+            #Compute Beta as Delta_i / Delta_i-1
             beta = delta / delta0
+            #Compute the new direction vector from Beta, d_i-1
+            #and the updated residual vector
             d = r + np.dot(beta, d)
             i += 1
             if i == imax:
                 print('!Warning! Max Iterations Exhausted')
         if not i == imax:
             if self.verbose: print('Residual Magnitude Tolerance Reached')
+        #Store the magnitude of the residual vector
         self.conj_residual_mag = np.dot(np.transpose(r), r)
+        #Store the solution as determined
+        #by the conjugate gradient algorithm
         self.conj_solution = x
+        #Store the number of steps taken as a measure of efficiency
         self.conj_steps_taken = i
         
 def main():
+    '''
+    Main function for completing the tasks required in the
+    assignment. Creates a b vector = 
+    [1,2,3,4,5,6,7,8,9,10,11,12,13] and produces
+    steepest descent and conjugate gradient
+    solutions for a  range of tolerances. 
+    Then, the accuracies and efficiencies
+    of the solutions in the lowest error
+    tolerance case are displayed, and
+    finally, a visualization of the
+    efficiency of each algorithm as a
+    function of error tolerance is produced
+    '''
+    #Create the b vector [1,2,3,4,5,6,7,8,9,10,11,12,13]
     B = np.array(([1,2,3,4,5,6,7,8,9,10,11,12,13]))
-    tolerances = np.linspace(1e-3, 1e-16, 500)
+    #Create an array of tolerances from 1e-3 (high tolerance)
+    #all the way down towards machine precison (1e-16)
+    tolerances = np.linspace(1e-3, 1e-16, 1000)
     steep_steps = []
     conj_steps = []
     for i in tolerances:
+        #Create a MatEqnSol instance with
+        #the solution vector b
         s1 = MatEqnSol(B)
+        #Set the error tolerance
+        #(Magnitude of the residual vector)
+        #To the currently selected tolerance
         s1.error_tolerance = i
+        #Find a solution using the steepest
+        #descent algorithm
         s1.steepestDescent()
+        #Find a solution using the conjugate
+        #gradient algorithm
         s1.conjGrad()
+        #Keep track of the number of steps taken
+        #To reach tolerance for each of the
+        #two algorithms
         steep_steps.append(s1.steep_steps_taken)
         conj_steps.append(s1.conj_steps_taken)
+
+    #Print the outcome of the lowest tolerance
+    #solutions
     s1.printOutput()
-    fig1 = plt.figure()
-    plt.plot(tolerances, steep_steps, color = 'b', label = 'Steepest Descent')
-    plt.title('Efficiency Comparison Between Steepest Descent and Conjugate Gradient')
-    plt.xlabel('Acceptable Magnitude of Residual Vector')
-    plt.ylabel('Number of Iterations Required to Reach Desired Residual')
-    plt.plot(tolerances, conj_steps, color = 'r', label='Conjugate Gradient')
-    plt.grid(which='both')
-    plt.legend()
-    plt.show()
-    
+        
     print('Provided b Vector')
     print(s1.B)
     
@@ -209,6 +257,18 @@ def main():
     
     print('b Vector Recreated Through Conjugate Gradient Algorithm')
     print(np.dot(s1.matrix, s1.conj_solution))
+    #Create a plot comparing the efficencies
+    #of each of the algorithms as a function
+    #of the tolerance
+    fig1 = plt.figure()
+    plt.plot(tolerances, steep_steps, color = 'b', label = 'Steepest Descent')
+    plt.title('Efficiency Comparison Between Steepest Descent and Conjugate Gradient')
+    plt.xlabel('Acceptable Magnitude of Residual Vector')
+    plt.ylabel('Number of Iterations Required to Reach Desired Residual')
+    plt.plot(tolerances, conj_steps, color = 'r', label='Conjugate Gradient')
+    plt.grid(which='both')
+    plt.legend()
+    plt.show()
     
 if __name__ == '__main__':
     main()
