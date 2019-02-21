@@ -1,9 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Feb 14 11:27:42 2019
-
-@author: Alex
-"""
+#!/usr/bin/python3
 
 import numpy as np
 from scipy import linalg
@@ -40,7 +35,7 @@ def singularValueDecom(A):
     non_zero_AAT = eigenvals_AAT[rows_AAT].copy()
     
     Q1 = AAT_eigenvectors
-    #Q1[:,1:] = -Q1[:,1:].copy()
+    Q1[:,1:] = -Q1[:,1:].copy()
     temp = np.diag(np.sqrt(non_zero_AAT))
     sigma = np.zeros_like(A).astype(np.float64)
     sigma[:temp.shape[0],:temp.shape[1]] = temp
@@ -57,3 +52,7 @@ def singularValueDecom(A):
 
 A = np.array(([1,3,3,2],[2,6,9,5],[-1,-3,3,0]))
 Q1, sigma, Q2T = singularValueDecom(A)
+print('Input Matrix')
+print(A)
+print('Reconstructed Matrix')
+print(zeroer((np.dot(Q1,np.dot(sigma, Q2T)))))
