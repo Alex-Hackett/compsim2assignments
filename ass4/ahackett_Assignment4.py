@@ -4,6 +4,7 @@ import numpy as np
 from scipy import linalg
 import os
 import matplotlib.pylab as plt
+from mpl_toolkits.mplot3d import Axes3D
 
 def zeroer(A):
     for i in range(len(A)):
@@ -21,8 +22,8 @@ def singularValueDecom(A):
     ATA = np.dot(np.transpose(A), A)
     AAT = np.dot(A, np.transpose(A))
     
-    eigenvals_ATA, ATA_eigenvectors = (np.linalg.eigh(ATA))
-    eigenvals_AAT, AAT_eigenvectors = (np.linalg.eigh(AAT))
+    eigenvals_ATA, ATA_eigenvectors = (np.linalg.eig(ATA))
+    eigenvals_AAT, AAT_eigenvectors = (np.linalg.eig(AAT))
     
     ATA_index = eigenvals_ATA.argsort()[::-1]
     eigenvals_ATA = eigenvals_ATA[ATA_index]
@@ -39,13 +40,20 @@ def singularValueDecom(A):
     Q1[:,1:] = -Q1[:,1:].copy()
     temp = np.diag(np.sqrt(non_zero_AAT))
     sigma = np.zeros_like(A).astype(np.float64)
-    sigma[:temp.shape[0],:temp.shape[1]] = temp
+    if max(sigma.shape) > max(temp.shape):
+        sigma[:temp.shape[0],:temp.shape[1]] = temp
+    else: sigma = temp
     sigma[np.isnan(sigma)] = 0
     Q2 = ATA_eigenvectors
     Q2T = np.transpose(Q2.copy())
+    #print(Q1.shape)
+    #print(sigma.shape)
+    #print(Q2T.shape)
     original = zeroer(np.dot(np.dot(Q1, sigma), Q2T))
     if not np.allclose(A, original):
         print('!!!!SVD Failed to Reconstruct Original Matrix!!!!')
+    else:
+        print('SVD Sucessfully Reconstructed the Original Matrix')
     return Q1, sigma, Q2T
 
 
@@ -57,6 +65,12 @@ def QuestionOne():
     print(A)
     print('Reconstructed Matrix')
     print(zeroer((np.dot(Q1,np.dot(sigma, Q2T)))))
+    print('Q1 Matrix')
+    print(Q1)
+    print('Sigma Matrix')
+    print(sigma)
+    print('Q2T Matrix')
+    print(Q2T)
     
     
 class PCA:
@@ -74,7 +88,7 @@ class PCA:
         self.coVar()
         self.eignDecomC()
         self.princCom()
-        #self.svdCheck()
+        self.svdCheck()
         self.plotAnalysisDiagram()
         
     def centering(self):
@@ -101,26 +115,40 @@ class PCA:
         self.PC = np.dot(self.X, self.V)
         
     def svdCheck(self):
-        U, S, VT = singularValueDecom(self.X)
+        U, S, VT = linalg.svd(self.X)
+        S = np.diag(S)
         C_construct_svd = np.dot(np.dot(np.transpose(VT), S**2), VT) / (self.datasetRows - 1)
         if np.allclose(self.C, C_construct_svd):
             print('SVD Sucessfully Constructed the C Matrix')
+        else:
+            print('SVD Failed to Construct the C Matrix')
             
     def plotAnalysisDiagram(self):
         firstPC = self.PC[:,0]
         secondPC = self.PC[:,1]
+        thirdPC = self.PC[:,2]
         
         fig1 = plt.figure()
         plt.plot(firstPC[0:49], secondPC[0:49], 'ro', label = 'Iris Setosa')
         plt.plot(firstPC[50:99], secondPC[50:99], 'go', label = 'Iris Versicolor')
         plt.plot(firstPC[100:149], secondPC[100:149], 'bo', label = 'Iris Virginica')
         plt.title('PC Analysis Diagram')
-        plt.xlabel('Sepal Length Direction')
-        plt.ylabel('Sepal Width Direction')
+        plt.xlabel('First Principal Component')
+        plt.ylabel('Second Principal Component')
         plt.legend()
         plt.show()
         
-                
+        fig2 = plt.figure()
+        ax = fig2.add_subplot(111, projection='3d')
+        ax.scatter(firstPC[0:49], secondPC[0:49],thirdPC[0:49], 'ro', label = 'Iris Setosa')
+        ax.scatter(firstPC[50:99], secondPC[50:99],thirdPC[50:99], 'go', label = 'Iris Versicolor')
+        ax.scatter(firstPC[100:149], secondPC[100:149],thirdPC[100:149], 'bo', label = 'Iris Virginica')
+        plt.legend()
+        ax.set_xlabel('First Principal Component')
+        ax.set_ylabel('Second Principal Component')
+        ax.set_zlabel('Third Principal Component')
+        plt.show()
+        
 def QuestionTwo():
     PCA1 = PCA()
         
