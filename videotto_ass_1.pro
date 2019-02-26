@@ -57,8 +57,8 @@ Mname = STRTRIM('Moon, Exobase T ='+STRING(T_exo_m)+'K',2)
 P1 = PLOT(meanMolWeight, ALOG10(phij_per_N_Earth), COLOR = 'blue', $
   TITLE = 'Plot of Jeans Escape Flux per Unit Number Density', $
   XTITLE = 'Mean Molecular Weight', $
-  YTITLE = 'Jeans Escape Flux / $n_{exo}$ $(m^{5}s^{-1})$', $
-  NAME = 'Earth, Exobase T = 1000K')
+  YTITLE = 'Jeans Escape Flux / $n_{exo}$ $(ms^{-1})$', $
+  NAME = 'Earth, Exobase T = 1000K', LINE = '--')
   
 P2 = PLOT(meanMolWeight, ALOG10(phij_per_N_Moon),$
   COLOR = 'black', /OVERPLOT, NAME = Mname)
@@ -66,6 +66,5 @@ P2 = PLOT(meanMolWeight, ALOG10(phij_per_N_Moon),$
 l1 = LEGEND(TARGET=[P1,P2], SHADOW = 0)
 ;Observe neglibeble escape rates for all but the lightest molecules for the earth
 ; for the lunar case, even massive molecules like CO2 would have non-negligeble escape rates
-;This explains the Earth's secondary atmosphere, and why the moon is all but completely lacking in atmosphere
-
+;This explains the Earth's secondary atmosphere, and why the moon is all but completely lacking in atmosphere 
 END

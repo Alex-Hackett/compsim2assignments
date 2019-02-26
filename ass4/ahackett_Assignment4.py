@@ -233,16 +233,16 @@ class PCA:
         First figure, 2D plot of first two principal componenets
         '''
         #Plot the Iris Setosa points
-        plt.plot(firstPC[0:49], secondPC[0:49], 'ro', label = 'Iris Setosa')
+        plt.plot(firstPC[0:50], secondPC[0:50], 'ro', label = 'Iris Setosa')
         #plot the iris versicolor points
-        plt.plot(firstPC[50:99], secondPC[50:99], 'go', label = 'Iris Versicolor')
+        plt.plot(firstPC[50:100], secondPC[50:100], 'go', label = 'Iris Versicolor')
         #plot the iris virginica points
-        plt.plot(firstPC[100:149], secondPC[100:149], 'bo', label = 'Iris Virginica')
+        plt.plot(firstPC[100:], secondPC[100:], 'bo', label = 'Iris Virginica')
         plt.title('PC Analysis Diagram')
         plt.xlabel('First Principal Component')
         plt.ylabel('Second Principal Component')
         plt.legend()
-        plt.show()
+        #plt.show()
         
         fig2 = plt.figure()
         '''
@@ -251,11 +251,11 @@ class PCA:
         #Set up 3D plot
         ax = fig2.add_subplot(111, projection='3d')
         #Plot the iris setosa point
-        ax.scatter(firstPC[0:49], secondPC[0:49],thirdPC[0:49], 'ro', label = 'Iris Setosa')
+        ax.scatter(firstPC[0:50], secondPC[0:50],thirdPC[0:50], 'ro', label = 'Iris Setosa')
         #plot the iris versicolor point
-        ax.scatter(firstPC[50:99], secondPC[50:99],thirdPC[50:99], 'go', label = 'Iris Versicolor')
+        ax.scatter(firstPC[50:100], secondPC[50:100],thirdPC[50:100], 'go', label = 'Iris Versicolor')
         #plot the iris virginica points
-        ax.scatter(firstPC[100:149], secondPC[100:149],thirdPC[100:149], 'bo', label = 'Iris Virginica')
+        ax.scatter(firstPC[100:], secondPC[100:],thirdPC[100:], 'bo', label = 'Iris Virginica')
         plt.legend()
         ax.set_xlabel('First Principal Component')
         ax.set_ylabel('Second Principal Component')
